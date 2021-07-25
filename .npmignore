@@ -1,0 +1,7 @@
+build
+coverage
+docs
+examples
+icon-builder
+test
+*.spec.*

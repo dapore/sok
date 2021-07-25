@@ -1,0 +1,30 @@
+{
+  "name": "searchable",
+  "version": "1.0.0",
+  "description": "Turn data into a searchable database on the AWS S3 service",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "author": "Rubin Apore",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "standard",
+    "test": "yarn run lint & ava",
+    "report": "yarn run lint & nyc --reporter=html --reporter=text ava"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.14.8",
+    "ava": "^3.15.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "esm": "^3.2.25",
+    "nyc": "^15.1.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.23.0",
+    "@meltwater/phi": "^4.0.0",
+    "awaiting": "^3.0.0",
+    "debug": "^4.3.2",
+    "uuid": "^8.3.2"
+  }
+}

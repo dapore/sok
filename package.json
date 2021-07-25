@@ -12,6 +12,12 @@
     "test": "yarn run lint & ava",
     "report": "yarn run lint & nyc --reporter=html --reporter=text ava"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test",
+      "post-checkout": "echo \"Changed branch\""
+    }
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.14.8",
     "ava": "^3.15.0",

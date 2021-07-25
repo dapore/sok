@@ -24,6 +24,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.2.2",
     "esm": "^3.2.25",
+    "husky": "^7.0.1",
     "nyc": "^15.1.0"
   },
   "dependencies": {

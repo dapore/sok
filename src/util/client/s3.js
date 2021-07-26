@@ -7,6 +7,8 @@ import {
   PutObjectCommand,
   S3Client
 } from '@aws-sdk/client-s3'
+import createLogger from '../logger'
+
 export * from '@aws-sdk/client-s3'
 
 /**
@@ -35,7 +37,18 @@ export const createHeadObject = ({
 
 export const createGetObject = ({
   client
-}) => options => client.send(new GetObjectCommand(options))
+}) => async options => {
+  const log = createLogger('GetObject')
+  log(options)
+  const streamToString = stream => new Promise((resolve, reject) => {
+    const chunks = []
+    stream.on('data', chunk => chunks.push(chunk))
+    stream.on('error', reject)
+    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
+  })
+  const { Body: stream } = await client.send(new GetObjectCommand(options))
+  return streamToString(stream)
+}
 
 export const createDeleteObject = ({
   client

@@ -71,7 +71,6 @@ export const createSaveRecord = options => async record => {
 
 export const addIdToRecord = record => ({ ...record, uuid: getUuid() })
 export default options => async (...objects) => {
-  const { client, bucket, searchOptions, ...otherOptions } = options
   const saveRecord = createSaveRecord(options)
   const handleRecord = compose(saveRecord, addIdToRecord)
   await mapAwait(objects, length(objects), handleRecord)

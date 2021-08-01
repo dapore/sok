@@ -4,15 +4,19 @@ import {
   length,
   compose,
   prop,
-  map
+  map,
+  isNotNilOrEmpty,
+  when
 } from '@meltwater/phi'
 import { map as mapAwait, success } from 'awaiting'
 import { createPutToS3 } from './util/client/s3'
 import getVariantKeysFromRecord from './util/get-variant-keys-from-record'
 import createRecordKey from './util/get-record-key'
 import createDeleteOldRecord from './remove-from-index'
+import createLogger from './util/logger'
 
 export const createSaveVariants = options => async record => {
+  const log = createLogger('SaveVariants')
   const {
     client,
     bucket,
@@ -20,16 +24,16 @@ export const createSaveVariants = options => async record => {
     searchOptions: { variant: variantPrefix }
   } = options
   const variantKeys = getVariantKeysFromRecord(record, indexName, variantPrefix)
+  log(length(variantKeys))
   const zeroFileSize = ''
-  await mapAwait(variantKeys, length(variantKeys), async key => {
-    await createPutToS3({ client })({
-      Body: zeroFileSize,
-      ContentType: 'search/variant',
-      Bucket: bucket,
-      Key: key
-    })
-  })
-  return variantKeys
+  await mapAwait(variantKeys, length(variantKeys), async key => createPutToS3({ client })({
+    Body: zeroFileSize,
+    ContentType: 'search/variant',
+    Bucket: bucket,
+    Key: key
+  }))
+  log('Done saving')
+  return true
 }
 
 export const createSaveRecord = options => async record => {
@@ -51,13 +55,16 @@ export const addIdToRecord = record => {
 
 export const asyncMute = run => input => success(run(input))
 
-export default options => async (..._objects) => {
+export default options => async (...objs) => {
+  const log = createLogger('AddToIndex')
+  log('Start adding')
   const saveRecord = createSaveRecord(options)
-  const deleteOldRecord = createDeleteOldRecord(options)
-  const removeOldRecord = compose(deleteOldRecord, prop('uuid'), addIdToRecord)
+  const deleteOldRecord = when(isNotNilOrEmpty, createDeleteOldRecord(options))
+  const removeOldRecord = compose(deleteOldRecord, prop('uuid'))
   const handleRecord = compose(saveRecord, addIdToRecord)
-  const objects = map(addIdToRecord, _objects)
-  await mapAwait(objects, length(objects), asyncMute(removeOldRecord))
+  await mapAwait(objs, length(objs), asyncMute(removeOldRecord))
+  const objects = map(addIdToRecord, objs)
   await mapAwait(objects, length(objects), handleRecord)
+  log('Done adding')
   return { status: objects }
 }

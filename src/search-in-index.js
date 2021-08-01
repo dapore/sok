@@ -1,12 +1,13 @@
-import { map, split, uniq, length, fromJson } from '@meltwater/phi'
+import { map, split, uniq, length, fromJson, toLower } from '@meltwater/phi'
 import { map as mapAwait } from 'awaiting'
 import { createGetObject, createListFromS3 } from './util/client/s3'
 import getRecordKey, { createGetSearchPrefix } from './util/get-record-key'
 import createLogger from './util/logger'
 
-export default options => async (searchTerm, otherOptions = {}) => {
+export default options => async (_searchTerm = '', otherOptions = {}) => {
   const log = createLogger('Searching')
-  log('SearchTerm', searchTerm)
+  log('SearchTerm', _searchTerm)
+  const searchTerm = toLower(_searchTerm)
   const getObject = createGetObject(options)
   const listItems = createListFromS3(options)
   const prefix = createGetSearchPrefix(options)(searchTerm)

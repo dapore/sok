@@ -31,7 +31,7 @@ export const createDeleteRecord = options => async uuid => {
   const { bucket } = options
   const key = createRecordKey(options)({ uuid })
   log('Using key', key)
-  const record = await (createGetObject(options)({
+  const record = await success(createGetObject(options)({
     Key: key,
     Bucket: bucket
   }))

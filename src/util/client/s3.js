@@ -1,65 +1,31 @@
-import {
-  DeleteObjectCommand,
-  GetObjectCommand,
-  HeadBucketCommand,
-  HeadObjectCommand,
-  ListObjectsV2Command,
-  PutObjectCommand,
-  S3Client
-} from '@aws-sdk/client-s3'
-import createLogger from '../logger'
-
-export * from '@aws-sdk/client-s3'
-
-/**
- * Create an s3 client
- * @param {} Get full list of params here https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/s3clientresolvedconfig.html
- * @returns s3 client
- */
-export default ({ s3 }) => new S3Client(s3)
-/**
- * List items from s3
- * @param {*} param0 come from https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/listobjectsv2commandinput.html
- * @returns { Contents, ...}
- */
+import { S3 } from 'aws-sdk'
+export default ({ s3 }) => new S3(s3)
 export const createListFromS3 = ({
   bucket,
   client
-}) => options => client.send(new ListObjectsV2Command({ Bucket: bucket, ...options }))
-
-// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/modules/putobjectrequest.html
-export const createPutToS3 = ({
-  bucket,
-  client
-}) => options => client.send(new PutObjectCommand({ Bucket: bucket, ...options }))
+}) => options => client.listObjectsV2({ Bucket: bucket, ...options }).promise()
 
 export const createHeadBucket = ({
   bucket,
   client
-}) => options => client.send(new HeadBucketCommand({ Bucket: bucket, ...options }))
+}) => options => client.headBucket({ Bucket: bucket, ...options }).promise()
 
 export const createHeadObject = ({
   bucket,
   client
-}) => options => client.send(new HeadObjectCommand({ Bucket: bucket, ...options }))
+}) => options => client.headObject({ Bucket: bucket, ...options }).promise()
 
 export const createGetObject = ({
   bucket,
   client
-}) => async options => {
-  const log = createLogger('GetObject')
-  log(options)
-  const streamToString = stream => new Promise((resolve, reject) => {
-    const chunks = []
-    stream.on('data', chunk => chunks.push(chunk))
-    stream.on('error', reject)
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
-  })
-  const { Body: stream } = await client.send(new GetObjectCommand({ Bucket: bucket, ...options }))
-  return streamToString(stream)
-}
+}) => options => client.getObject({ Bucket: bucket, ...options }).promise()
+
+export const createPutToS3 = ({
+  bucket,
+  client
+}) => options => client.putObject({ Bucket: bucket, ...options }).promise()
 
 export const createDeleteObject = ({
   bucket,
   client
-}) => options => client.send(new DeleteObjectCommand({ Bucket: bucket, ...options }))
+}) => options => client.deleteObject({ Bucket: bucket, ...options }).promise()

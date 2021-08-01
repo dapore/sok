@@ -10,4 +10,4 @@ export default ({
 export const createGetSearchPrefix = ({
   indexName,
   searchOptions: { variant }
-}) => searchTerm => `${indexName}/${variant}/${toLower(searchTerm)}`
+}) => (searchTerm = '') => `${indexName}/${variant}/${toLower(searchTerm)}`

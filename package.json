@@ -6,7 +6,6 @@
   "module": "src/index.js",
   "author": "Rubin Apore",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "lint": "standard",
     "test": "yarn run lint; ava",

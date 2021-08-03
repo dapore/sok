@@ -5,3 +5,10 @@ examples
 icon-builder
 test
 *.spec.*
+tmp
+.editorconfig
+.gitattributes
+.jshintrc
+.nvmrc
+ava.config.js
+nyc.config.js

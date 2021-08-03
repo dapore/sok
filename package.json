@@ -1,5 +1,5 @@
 {
-  "name": "searchable",
+  "name": "@dapore/sok",
   "version": "1.0.0",
   "description": "Turn data into a searchable database on the AWS S3 service",
   "main": "src/index.js",
@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "standard",
     "test": "yarn run lint; ava",
-    "report": "yarn run lint & nyc --reporter=html --reporter=text ava"
+    "report": "yarn run lint;nyc --reporter=html --reporter=text ava"
   },
   "husky": {
     "hooks": {
